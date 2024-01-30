@@ -1,0 +1,15 @@
+# .gitpod.yml
+
+# Specify the Docker image for your development environment
+image:
+  file: .gitpod.Dockerfile
+
+# Specify tasks to be executed when the environment starts
+tasks:
+  - init: npm install
+    command: npm run start
+
+# Specify the ports to be exposed
+ports:
+  - port: 3000
+    onOpen: ignore
