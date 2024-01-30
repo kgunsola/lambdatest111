@@ -1,0 +1,100 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+public class LambdaTestAutomation {
+
+    WebDriver driver;
+
+    @BeforeTest
+    public void setUp() {
+        // Set the path of the ChromeDriver executable
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        // Initialize ChromeDriver
+        driver = new ChromeDriver();
+        // Navigate to LambdaTest website
+        driver.get("https://www.lambdatest.com/");
+        // Set an implicit wait to wait for elements to be available
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testLambdaTestAutomation() {
+        // Step 2: Perform an explicit wait (implicit wait is set in @BeforeTest)
+
+        // Step 3: Scroll to 'SEE ALL INTEGRATIONS'
+        WebElement seeAllIntegrations = driver.findElement(By.xpath("//a[contains(text(),'SEE ALL INTEGRATIONS')]"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", seeAllIntegrations);
+
+        // Step 4: Click on 'SEE ALL INTEGRATIONS'
+        seeAllIntegrations.click();
+
+        // Step 5: Save window handles in a List
+        List<String> windowHandles = new ArrayList<>(driver.getWindowHandles());
+        // Print window handles
+        System.out.println("Window Handles: " + windowHandles);
+
+        // Step 6: Verify URL
+        String expectedUrl = "expected_url";
+        for (String handle : windowHandles) {
+            driver.switchTo().window(handle);
+            if (driver.getCurrentUrl().equals(expectedUrl)) {
+                break;
+            }
+        }
+        Assert.assertEquals(driver.getCurrentUrl(), expectedUrl, "URLs do not match.");
+
+        // Step 7: Scroll to 'Codeless Automation'
+        WebElement codelessAutomation = driver.findElement(By.xpath("//a[contains(text(),'Codeless Automation')]"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", codelessAutomation);
+
+        // Step 8: Click 'LEARN MORE' for Testing Whiz
+        WebElement learnMoreLink = driver.findElement(By.xpath("//a[contains(text(),'LEARN MORE') and contains(@href,'testing-whiz')]"));
+        learnMoreLink.click();
+		
+		// Step 9: Check if the title of the page is ‘TestingWhiz Integration | LambdaTest’
+        String expectedTitle = "TestingWhiz Integration | LambdaTest";
+        String actualTitle = driver.getTitle();
+        Assert.assertEquals(actualTitle, expectedTitle, "Page title does not match.");
+
+        // Step 10: Close the current window using the window handle obtained in step (5)
+        String mainHandle = windowHandles.get(0); // Assuming the main window handle is at index 0
+        driver.close(); // Close the current window
+        driver.switchTo().window(mainHandle); // Switch back to the main window
+
+        // Step 11: Print the current window count
+        int windowCount = driver.getWindowHandles().size();
+        System.out.println("Current Window Count: " + windowCount);
+
+        // Step 12: Set the URL to https://www.lambdatest.com/blog on the main window
+        driver.get("https://www.lambdatest.com/blog");
+
+        // Step 13: Click on the ‘Community’ link and verify whether the URL is https://community.lambdatest.com/.
+        WebElement communityLink = driver.findElement(By.linkText("Community"));
+        communityLink.click();
+        String expectedCommunityUrl = "https://community.lambdatest.com/";
+        Assert.assertEquals(driver.getCurrentUrl(), expectedCommunityUrl, "URLs do not match.");
+
+        // Step 14: Close the current browser window
+        driver.close();
+    }
+
+    @AfterTest
+    public void tearDown() {
+        // Close the browser
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
